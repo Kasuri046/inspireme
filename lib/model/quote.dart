@@ -13,4 +13,11 @@ class Quote {
     text: json['text'],
     author: json['author'],
   );
+
+  // FireStore
+  // factory Quote.fromJson(Map<String, dynamic> json) => Quote(
+  //   text: json['text'] ?? '',
+  //   author: json['author'] ?? '',
+  // );
+
 }

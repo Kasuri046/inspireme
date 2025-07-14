@@ -1,11 +1,17 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:inspireme/utils/approutes.dart';
 import 'package:inspireme/utils/apptext.dart';
 import 'package:provider/provider.dart';
+import 'firebase_options.dart';
 import 'providers/quote_provider.dart';
 import 'theme/app_theme.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(InspireMeApp());
 }
 
