@@ -1,8 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:inspireme/utils/colors.dart';
 import 'package:inspireme/utils/dimensions.dart';
 import 'package:provider/provider.dart';
+import '../auth/auth_services_screen.dart';
 import '../providers/quote_provider.dart';
 import '../utils/apptext.dart';
 import '../widgets/theme_switch.dart';
@@ -10,20 +10,26 @@ import '../data/gradient_data.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:inspireme/utils/approutes.dart';
 
 class HomeScreen extends StatelessWidget {
+  final _auth = AuthService();
+
   @override
   Widget build(BuildContext context) {
     final quoteProvider = Provider.of<QuoteProvider>(context);
     final isDarkTheme = quoteProvider.isDarkTheme;
 
-    final gradientIndex = quoteProvider.currentQuote.text.hashCode.abs() % GradientData.lightGradients.length;
-    final currentGradient = isDarkTheme
-        ? GradientData.darkGradients[gradientIndex]
-        : GradientData.lightGradients[gradientIndex];
+    final gradientIndex =
+        quoteProvider.currentQuote.text.hashCode.abs() % GradientData.lightGradients.length;
+    final currentGradient =
+        isDarkTheme
+            ? GradientData.darkGradients[gradientIndex]
+            : GradientData.lightGradients[gradientIndex];
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text(
           AppText.InspireMeText,
           style: TextStyle(
@@ -67,41 +73,36 @@ class HomeScreen extends StatelessWidget {
               children: [
                 quoteProvider.currentQuote.text.isNotEmpty
                     ? Text(
-                  '"${quoteProvider.currentQuote.text}"',
-                  key: ValueKey(quoteProvider.currentQuote.text),
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontStyle: FontStyle.italic,
-                    color: isDarkTheme
-                        ? AppColors.whiteColor
-                        : AppColors.blackColor,
-                  ),
-                  textAlign: TextAlign.center,
-                )
-                    .animate(key: ValueKey(quoteProvider.currentQuote.text))
-                    .fadeIn(duration: 1000.ms, curve: Curves.easeInOut)
-                    .slideY(begin: 0.3, end: 0, duration: 1000.ms, curve: Curves.easeInOut)
+                          '"${quoteProvider.currentQuote.text}"',
+                          key: ValueKey(quoteProvider.currentQuote.text),
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontStyle: FontStyle.italic,
+                            color: isDarkTheme ? AppColors.whiteColor : AppColors.blackColor,
+                          ),
+                          textAlign: TextAlign.center,
+                        )
+                        .animate(key: ValueKey(quoteProvider.currentQuote.text))
+                        .fadeIn(duration: 1000.ms, curve: Curves.easeInOut)
+                        .slideY(begin: 0.3, end: 0, duration: 1000.ms, curve: Curves.easeInOut)
                     : Text(
-                  AppText.InspireMeText,
-                  style: Theme.of(context).textTheme.titleLarge,
-                  textAlign: TextAlign.center,
-                ),
+                      AppText.InspireMeText,
+                      style: Theme.of(context).textTheme.titleLarge,
+                      textAlign: TextAlign.center,
+                    ),
                 SizedBox(height: Dimensions.fontSizeLarge),
                 quoteProvider.currentQuote.author.isNotEmpty
                     ? Text(
-                  '- ${quoteProvider.currentQuote.author}',
-                  key: ValueKey(quoteProvider.currentQuote.author),
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: isDarkTheme
-                        ? AppColors.whiteColor
-                        : AppColors.blackColor,
-                  ),
-                )
-                    .animate(key: ValueKey(quoteProvider.currentQuote.author))
-                    .fadeIn(duration: 1000.ms, curve: Curves.easeInOut)
-                    .slideY(begin: 0.3, end: 0, duration: 1000.ms, curve: Curves.easeInOut)
+                          '- ${quoteProvider.currentQuote.author}',
+                          key: ValueKey(quoteProvider.currentQuote.author),
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: isDarkTheme ? AppColors.whiteColor : AppColors.blackColor,
+                          ),
+                        )
+                        .animate(key: ValueKey(quoteProvider.currentQuote.author))
+                        .fadeIn(duration: 1000.ms, curve: Curves.easeInOut)
+                        .slideY(begin: 0.3, end: 0, duration: 1000.ms, curve: Curves.easeInOut)
                     : SizedBox.shrink(),
                 SizedBox(height: Dimensions.fontSizeLarge),
-
                 // Share + Like buttons in a row
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -116,23 +117,22 @@ class HomeScreen extends StatelessWidget {
                         final author = quote.author.trim();
 
                         if (quoteText.isNotEmpty) {
-                          final shareText = author.isNotEmpty
-                              ? '"$quoteText"\n\n- $author'
-                              : '"$quoteText"';
+                          final shareText =
+                              author.isNotEmpty ? '"$quoteText"\n\n- $author' : '"$quoteText"';
                           Share.share(shareText);
                         }
                       },
                     ),
-
                     // Like button
                     IconButton(
                       icon: Icon(
                         quoteProvider.isFavorite(quoteProvider.currentQuote)
                             ? Icons.favorite
                             : Icons.favorite_border,
-                        color: quoteProvider.isFavorite(quoteProvider.currentQuote)
-                            ? AppColors.redColor
-                            : null,
+                        color:
+                            quoteProvider.isFavorite(quoteProvider.currentQuote)
+                                ? AppColors.redColor
+                                : null,
                       ),
                       onPressed: () async {
                         quoteProvider.toggleFavorite(quoteProvider.currentQuote);
@@ -147,6 +147,25 @@ class HomeScreen extends StatelessWidget {
                       },
                     ),
                   ],
+                ),
+                SizedBox(height: Dimensions.fontSizeLarge),
+                FloatingActionButton(
+                  onPressed: () async {
+                    try {
+                      await _auth.signout();
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(const SnackBar(content: Text('Logged out successfully')));
+                      Navigator.pushReplacementNamed(context, AppRoutes.login);
+                    } catch (e) {
+                      debugPrint('Logout error: $e');
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Failed to log out. Please try again.')),
+                      );
+                    }
+                  },
+                  child: Icon(Icons.logout),
+                  backgroundColor: isDarkTheme ? AppColors.darkTheme : AppColors.lightTheme,
                 ),
               ],
             ),

@@ -15,7 +15,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     // Navigate to home screen after 2 seconds
     Timer(Duration(seconds: 2), () {
-      Navigator.pushReplacementNamed(context, AppRoutes.home);
+      Navigator.pushReplacementNamed(context, AppRoutes.wrapper);
     });
   }
 
