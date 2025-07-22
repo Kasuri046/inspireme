@@ -1,9 +1,7 @@
 import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:inspireme/auth/signup_screen.dart';
 import 'package:inspireme/auth/widgets/textformfield_screen.dart';
-import '../screens/home_screen.dart';
 import 'auth_services_screen.dart';
 import 'forgot_screen.dart';
 import 'package:inspireme/utils/approutes.dart';

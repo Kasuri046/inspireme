@@ -6,15 +6,15 @@ import '../auth/login_screen.dart';
 import '../auth/widgets/wrappers.dart';
 import '../screens/home_screen.dart';
 import '../screens/favorites_screen.dart';
-import '../screens/splash_screen.dart'; // <-- Add this
+import '../screens/splash_screen.dart'; // <-- A  dd this
 
 class AppRoutes {
-  static const String splash = '/';
-  static const String wrapper = '/wrapper';
-  static const String login = '/login';
-  static const String signup = '/signup';
-  static const String emailVerification = '/emailVerification';
-  static const String home = '/home';
+  static const String splash = AppText.routeSplash;
+  static const String wrapper = AppText.routeWrapper;
+  static const String login = AppText.routeLogin;
+  static const String signup = AppText.routeSignUp;
+  static const String emailVerification = AppText.routeEmailVerification;
+  static const String home = AppText.routeHome;
   static const String favorites = AppText.routeFavourite;
 
   static final Map<String, WidgetBuilder> routes = {

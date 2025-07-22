@@ -1,6 +1,6 @@
-
 import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:inspireme/auth/widgets/textformfield_screen.dart';
 import 'package:inspireme/utils/approutes.dart';
@@ -188,7 +188,15 @@ class _SignupScreenState extends State<SignupScreen> {
                               ? const Center(child: CircularProgressIndicator(color: Colors.blue))
                               : ElevatedButton(
                             onPressed: () async {
-                              await signup();
+                              try{
+                                await signup();
+                              } catch (e, stackTrace) {
+                                await FirebaseCrashlytics.instance.recordError(
+                                  e,
+                                  stackTrace,
+                                  reason: 'Logout button failed',
+                                );
+                              }
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.blue,

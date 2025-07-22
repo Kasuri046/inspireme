@@ -1,9 +1,12 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:inspireme/utils/colors.dart';
 import 'package:inspireme/utils/dimensions.dart';
 import 'package:provider/provider.dart';
 import '../auth/auth_services_screen.dart';
 import '../providers/quote_provider.dart';
+import '../utils/analytics_service.dart';
 import '../utils/apptext.dart';
 import '../widgets/theme_switch.dart';
 import '../data/gradient_data.dart';
@@ -19,6 +22,9 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final quoteProvider = Provider.of<QuoteProvider>(context);
     final isDarkTheme = quoteProvider.isDarkTheme;
+
+    // // 🔥 Log screen view
+    // AnalyticsService().logScreenView('HomeScreen');
 
     final gradientIndex =
         quoteProvider.currentQuote.text.hashCode.abs() % GradientData.lightGradients.length;
@@ -120,6 +126,14 @@ class HomeScreen extends StatelessWidget {
                           final shareText =
                               author.isNotEmpty ? '"$quoteText"\n\n- $author' : '"$quoteText"';
                           Share.share(shareText);
+
+                          // 🔥 Analytics
+                          // AnalyticsService().logEvent('quote_shared', parameters: {
+                          //   'text': quoteText,
+                          //   'author': author,
+                          // });
+
+
                         }
                       },
                     ),
@@ -142,7 +156,13 @@ class HomeScreen extends StatelessWidget {
                           await player.setSource(AssetSource('like.mp3'));
                           await player.resume();
                         } catch (e) {
-                          debugPrint('Error playing sound: $e');
+                          debugPrint('$e');
+
+                          // //  🔥  Analytics
+                          // AnalyticsService().logEvent('quote_liked', parameters: {
+                          //   'text': quoteProvider.currentQuote.text,
+                          //   'author': quoteProvider.currentQuote.author,
+                          // });
                         }
                       },
                     ),
@@ -150,17 +170,35 @@ class HomeScreen extends StatelessWidget {
                 ),
                 SizedBox(height: Dimensions.fontSizeLarge),
                 FloatingActionButton(
+                  onPressed: ()  {
+                    FirebaseCrashlytics.instance.crash();
+                  },
+                  child: Icon(Icons.bug_report),
+                  backgroundColor: isDarkTheme ? AppColors.darkTheme : AppColors.lightTheme,
+                ),
+                SizedBox(height: Dimensions.fontSizeLarge,),
+                FloatingActionButton(
                   onPressed: () async {
                     try {
                       await _auth.signout();
                       ScaffoldMessenger.of(
                         context,
-                      ).showSnackBar(const SnackBar(content: Text('Logged out successfully')));
+                      ).showSnackBar(const SnackBar(content: Text(AppText.homeScreenLogOut)));
                       Navigator.pushReplacementNamed(context, AppRoutes.login);
-                    } catch (e) {
-                      debugPrint('Logout error: $e');
+
+                      // // 🔥 Analytics
+                      // AnalyticsService().logEvent('user_logout');
+
+                    } catch (e, stackTrace) {
+                      // ✅ Log the exception to Firebase Crashlytics
+                      await FirebaseCrashlytics.instance.recordError(
+                        e,
+                        stackTrace,
+                        reason: 'Logout button failed',
+                      );
+                      debugPrint('$e');
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Failed to log out. Please try again.')),
+                        const SnackBar(content: Text(AppText.homeScreenError)),
                       );
                     }
                   },
@@ -179,6 +217,10 @@ class HomeScreen extends StatelessWidget {
           await player.setSource(AssetSource('music.mp3'));
           player.resume();
           quoteProvider.getNewQuote();
+
+          // // 🔥 Analytics
+          // AnalyticsService().logEvent('new_quote_generated');
+
         },
         label: Text(
           AppText.InspireMeText,

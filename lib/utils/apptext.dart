@@ -1,9 +1,20 @@
 class AppText {
+
+  //App Text
   static const String InspireMeText = 'Inspire Me';
-  static const String routeFavourite = '/favorites';
   static const String favouriteNavBarText = '❤️ Favorite Quotes ❤️';
   static const String noFavourite = 'No favorites yet!';
 
+  //Routes
+  static const String routeSplash = '/';
+  static const String routeWrapper = '/wrapper';
+  static const String routeLogin = '/login';
+  static const String routeSignUp = '/signup';
+  static const String routeEmailVerification = '/emailVerification';
+  static const String routeHome = '/home';
+  static const String routeFavourite = '/favorites';
+
+  //Quotes
   static const String quote1 = "The only way to do great work is to love what you do.";
   static const String quote2 = "Success is not final, failure is not fatal.";
   static const String quote3 = "Believe you can and you're halfway there.";
@@ -25,6 +36,7 @@ class AppText {
   static const String quote19 = "The best time to plant a tree was 20 years ago. The second best time is now.";
   static const String quote20 = "Your time is limited, don’t waste it living someone else’s life.";
 
+  //Authors
   static const String author1 = "Steve Jobs";
   static const String author2 = "Winston Churchill";
   static const String author3 = "Theodore Roosevelt";
@@ -41,4 +53,9 @@ class AppText {
   static const String author14 = "C.S. Lewis";
   static const String author15 = "Mark Twain";
   static const String author16 = "Chinese Proverb";
+
+
+  //HomeScreen Logs
+  static const String homeScreenLogOut = "Logged out successfully";
+  static const String homeScreenError = "Failed to log out. Please try again.'";
 }

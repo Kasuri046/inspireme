@@ -7,7 +7,7 @@ class AuthService {
 
   Future<UserCredential?> loginWithGoogle() async {
     try {
-
+      // 1. Initialize Google Sign-In
       final GoogleSignIn googleSignIn = GoogleSignIn(
         scopes: ['email', 'profile'],
         clientId: '', // Only needed for iOS
@@ -21,8 +21,7 @@ class AuthService {
         throw Exception('Google sign-in was cancelled');
       }
       // 4. Get auth details
-      final GoogleSignInAuthentication googleAuth =
-      await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
       // 5. Create a credential
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
